@@ -4,8 +4,9 @@ import HeroSection from "@/components/hero/hero";
 
 export default function Home() {
   return (
-    <main className="bg-gray-800 min-h-screen">
+    <main className=" min-h-screen">
       <HeroSection />
+      {/* <Image src="/banner-3.jpg" alt="..." width={1920} height={1080} /> */}
     </main>
   );
 }

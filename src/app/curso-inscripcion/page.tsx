@@ -4,6 +4,7 @@ const RegistrationForm = () => {
   return (
     <div className="h-screen">
       <CourseForm />
+      {/* <ContactForm /> */}
     </div>
   );
 };

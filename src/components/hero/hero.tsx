@@ -1,11 +1,5 @@
-import Carousel from "./carousel/Carousel";
-
 const HeroSection = () => {
-  return (
-    <div>
-      <Carousel />
-    </div>
-  );
+  return <div>Home</div>;
 };
 
 export default HeroSection;

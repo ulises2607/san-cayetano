@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error sending email", error as Error);
     return NextResponse.json(
-      { message: "Email not sent", error: error.message },
+      { message: "Email not sent", error: error },
       { status: 500 }
     );
   }

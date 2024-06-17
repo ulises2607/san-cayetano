@@ -1,18 +1,44 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+
 import { TiArrowForwardOutline } from "react-icons/ti";
+import Loading from "./loading";
 
 const CourseForm = () => {
+  const router = useRouter();
   const [dataForm, setDataForm] = useState({});
+  const [deshabilidado, setDeshabilitado] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setDeshabilitado(true);
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     setDataForm(data);
+
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Email sent successfully", result);
+
+        setIsLoading(true);
+        router.push("/curso-inscripcion/success");
+      } else {
+        const error = await response.json();
+        console.error("Error sending email", error);
+      }
+    } catch (error) {
+      console.error("Error sending email", error);
+    }
   };
-  console.log("Lo del dataForm", dataForm);
 
   return (
     <div className="max-w-5xl mx-auto p-8">
@@ -38,7 +64,7 @@ const CourseForm = () => {
               Nombre y Apellido <span className="ml-3">:</span>
             </label>
             <input
-              name="Nombre y Apellido"
+              name="fullname"
               type="text"
               className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
               required
@@ -50,7 +76,7 @@ const CourseForm = () => {
             </label>
             <input
               required
-              name="Fecha de Nacimiento"
+              name="bornDate"
               type="date"
               className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
@@ -161,12 +187,33 @@ const CourseForm = () => {
           </div>
 
           <div className="flex w-full justify-center items-center text-center">
-            <button
-              type="submit"
-              className="flex justify-center m-4 text-white font-bold py-2 px-4 rounded-full bg-gradient-to-r from-[#297e93] to-[#1f5f6a] border border-transparent transform hover:scale-110 hover:border-white transition-transform duration-300 ease-in-out"
-            >
-              Inscribirme
-            </button>
+            {deshabilidado ? (
+              <div class="flex justify-center items-center space-x-1 text-sm text-gray-700">
+                <svg
+                  fill="none"
+                  class="w-6 h-6 animate-spin"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+
+                <div className="p-3">Enviando ...</div>
+              </div>
+            ) : (
+              <button
+                type="submit"
+                className="flex justify-center m-4 text-white font-bold py-2 px-4 rounded-full bg-gradient-to-r from-[#297e93] to-[#1f5f6a] border border-transparent transform hover:scale-110 hover:border-white transition-transform duration-300 ease-in-out"
+                disabled={deshabilidado}
+              >
+                Inscribirme
+              </button>
+            )}
           </div>
 
           {/* Separador */}
@@ -181,6 +228,9 @@ const CourseForm = () => {
             <p className="text-gray-700">Alumnos: $10.000</p>
             <p className="text-gray-700">Profesionales Técnicos: $18.000</p>
             <p className="text-gray-700">Publico en Gral.: $1.000</p>
+            <p className="text-gray-700">
+              Enviar comprobante por Whatsapp al número: (387) - 4734054
+            </p>
             <p className="text-black font-bold mt-4">
               Pago por Transferencia: (ALIAS) - MENTA.SEPIA.MARZO
             </p>

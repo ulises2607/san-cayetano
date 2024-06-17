@@ -27,8 +27,6 @@ export async function POST(req: Request) {
       Tipo de Asistente: ${formData.get("Tipo de Asistente")}
     `;
 
-    console.log("El mensaje es: ", message);
-
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: 465,

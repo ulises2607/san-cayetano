@@ -232,7 +232,7 @@ const CourseForm = () => {
               Enviar comprobante por Whatsapp al número: (387) - 4734054
             </p>
             <p className="text-black font-bold mt-4">
-              Pago por Transferencia: (ALIAS) - MENTA.SEPIA.MARZO
+              Pago por Transferencia: (ALIAS) - insti.sancayetano.mp
             </p>
             <p className="text-black font-bold">FUNDACION EDUCATIVA SALTA</p>
           </div>

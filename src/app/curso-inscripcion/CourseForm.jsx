@@ -58,102 +58,102 @@ const CourseForm = () => {
       {/* Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-lg">
         <h3 className="text-[#297e93] font-bold mb-4">FICHA DE INSCRIPCION</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Nombre y Apellido <span className="ml-3">:</span>
             </label>
             <input
               name="fullname"
               type="text"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
               required
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Fecha de Nacimiento <span className="ml-3">:</span>
             </label>
             <input
               required
               name="bornDate"
               type="date"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               D.N.I. <span className="ml-3">:</span>
             </label>
             <input
               required
               name="D.N.I."
               type="number"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Domicilio <span className="ml-3">:</span>
             </label>
             <input
               required
               name="Domicilio"
               type="text"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Telefono <span className="ml-3">:</span>
             </label>
             <input
               required
               name="Telefono"
               type="number"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Email <span className="ml-3">:</span>
             </label>
             <input
               required
               name="Email"
               type="email"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Profesion <span className="ml-3">:</span>
             </label>
             <input
               required
               name="Profesion"
               type="text"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
-          <div className="mb-4 flex text-center items-center">
-            <label className="flex justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
+          <div className="mb-4 md:flex md:items-center">
+            <label className="block md:flex md:items-center justify-end pr-2 font-bold text-gray-700 min-w-[25%]">
               Estudiante <span className="ml-3">:</span>
             </label>
             <input
               required
               name="Estudiante"
               type="text"
-              className="mt-1 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
+              className="mt-1 md:mt-0 block bg-[#f4f4f4] w-full border border-none rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-transparent"
             />
           </div>
 
           {/* Separador */}
           <div className="border-b-2 border-gray-400 pb-5"></div>
           {/* Fin Separador */}
-          {/*  */}
+
           {/* Tipo de asistente */}
-          <div className="p-10 pb-5 flex justify-between">
+          <div className="p-10 pb-5 flex flex-col md:flex-row md:justify-between gap-4">
             <div className="flex gap-3">
               <label className="block text-gray-700">Asistente:</label>
               <input

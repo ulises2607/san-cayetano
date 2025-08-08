@@ -51,7 +51,7 @@ const CourseForm = () => {
           </h2>
         </div>
         <h1 className="text-[#ebf5f6] text-center text-3xl font-bold mt-4 tracking-wider">
-          II CONGRESO DE TECNICOS EN LABORATORIO
+          III CONGRESO DE TECNICOS EN LABORATORIO
         </h1>
       </div>
 

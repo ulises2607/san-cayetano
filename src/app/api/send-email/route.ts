@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      subject: `Congreso - Inscripcion de ${email}`,
+      subject: `III Congreso - Inscripcion de ${email}`,
       text: message,
     };
 

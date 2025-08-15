@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Email API</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #297e93; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1f5f6a; }
+        #result { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Test Email API - III Congreso</h1>
+    
+    <form id="testForm">
+        <div class="form-group">
+            <label>Nombre y Apellido:</label>
+            <input type="text" name="fullname" value="Juan Pérez Test" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="Email" value="test@example.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Fecha de Nacimiento:</label>
+            <input type="date" name="bornDate" value="1990-01-01">
+        </div>
+        
+        <div class="form-group">
+            <label>D.N.I.:</label>
+            <input type="number" name="D.N.I." value="12345678">
+        </div>
+        
+        <div class="form-group">
+            <label>Domicilio:</label>
+            <input type="text" name="Domicilio" value="Calle Falsa 123">
+        </div>
+        
+        <div class="form-group">
+            <label>Teléfono:</label>
+            <input type="number" name="Telefono" value="3874567890">
+        </div>
+        
+        <div class="form-group">
+            <label>Profesión:</label>
+            <input type="text" name="Profesion" value="Técnico en Laboratorio">
+        </div>
+        
+        <div class="form-group">
+            <label>Estudiante:</label>
+            <input type="text" name="Estudiante" value="No">
+        </div>
+        
+        <div class="form-group">
+            <label>Tipo de Asistente:</label>
+            <select name="Tipo de Asistente">
+                <option value="Asistente">Asistente</option>
+                <option value="Disertante">Disertante</option>
+                <option value="Presentacion de poster">Presentación de poster</option>
+            </select>
+        </div>
+        
+        <button type="submit">Enviar Test Email</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Enviando...</p>';
+            
+            try {
+                const formData = new FormData(this);
+                
+                // Debug: Mostrar datos que se envían
+                console.log('=== Datos que se envían ===');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Email enviado exitosamente!</h3>
+                            <p><strong>Mensaje:</strong> ${result.message}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Error al enviar email</h3>
+                            <p><strong>Error:</strong> ${result.message}</p>
+                            <p><strong>Detalles:</strong> ${JSON.stringify(result.error)}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error de conexión</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

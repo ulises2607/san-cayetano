@@ -1,117 +1,199 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+// Headers CORS configurados para el dominio del instituto
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "https://institutosancayetanosalta.com",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization",
+  "Access-Control-Allow-Credentials": "true",
+};
+
 export async function GET() {
-  const data = {
-    message: "This is a GET request",
-  };
-  return NextResponse.json({ data });
+  return NextResponse.json(
+    { 
+      message: "API de Inscripciones - III Congreso de Técnicos en Laboratorio",
+      version: "1.0.0",
+      status: "active"
+    }, 
+    { headers: corsHeaders }
+  );
 }
 
 export async function POST(req: Request) {
-  // Configurar CORS
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
   try {
     const formData = await req.formData();
 
-    const name = formData.get("fullname");
-    const email = formData.get("email");
+    // Extraer datos del formulario
+    const nombreCompleto = formData.get("fullname");
+    const emailParticipante = formData.get("Email");
+    const documentoIdentidad = formData.get("D.N.I.");
+    const domicilioCompleto = formData.get("Domicilio");
+    const numeroTelefono = formData.get("Telefono");
+    const profesionOcupacion = formData.get("Profesion");
+    const esEstudiante = formData.get("Estudiante");
+    const categoriaAsistente = formData.get("Tipo de Asistente");
+    const fechaNacimiento = formData.get("bornDate");
+
+    // Validar que tenemos los datos básicos
+    if (!nombreCompleto || !emailParticipante) {
+      return NextResponse.json(
+        {
+          message: "Faltan datos requeridos",
+          error: "Missing required fields",
+        },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
     const message = `
 NUEVA INSCRIPCIÓN - III CONGRESO DE TÉCNICOS EN LABORATORIO
 
 Datos del participante:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Nombre y Apellido: ${name}
-Email: ${email}
-Fecha de Nacimiento: ${formData.get("bornDate")}
-D.N.I.: ${formData.get("dni")} 
-Domicilio: ${formData.get("domicilio")}
-Teléfono: ${formData.get("telefono")}
-Profesión: ${formData.get("profesion")}
-Estudiante: ${formData.get("estudiante")}
-Tipo de Asistente: ${formData.get("tipoAsistente")}
+Nombre y Apellido: ${nombreCompleto}
+Email: ${emailParticipante}
+Fecha de Nacimiento: ${fechaNacimiento || "No especificado"}
+D.N.I.: ${documentoIdentidad || "No especificado"}
+Domicilio: ${domicilioCompleto || "No especificado"}
+Teléfono: ${numeroTelefono || "No especificado"}
+Profesión: ${profesionOcupacion || "No especificado"}
+Estudiante: ${esEstudiante || "No especificado"}
+Tipo de Asistente: ${categoriaAsistente || "No especificado"}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
     `;
 
+    console.log("📧 Procesando nueva inscripción:", { 
+      nombre: nombreCompleto, 
+      email: emailParticipante 
+    });
+
+    // Configuración mejorada del transporter según mejores prácticas de Nodemailer
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
-      port: 465,
-      secure: true,
+      port: 465, // Puerto seguro para SSL/TLS
+      secure: true, // true para puerto 465, false para otros puertos
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
       tls: {
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false, // Para evitar problemas con certificados self-signed
+        minVersion: "TLSv1.2", // Versión mínima de TLS según mejores prácticas
+      },
+      // Configuraciones adicionales para mejorar compatibilidad
+      connectionTimeout: 60000, // 60 segundos
+      greetingTimeout: 30000, // 30 segundos  
+      socketTimeout: 60000, // 60 segundos
     });
 
+    // Configuración del email según mejores prácticas
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: `III Congreso - Inscripción de ${email}`,
-      text: message,
+      from: {
+        name: 'III Congreso de Técnicos en Laboratorio',
+        address: process.env.EMAIL_USER || 'tecnico@institutosancayetanosalta.com'
+      },
+      to: process.env.EMAIL_USER || 'tecnico@institutosancayetanosalta.com',
+      subject: `🔬 Nueva Inscripción: ${nombreCompleto} - ${emailParticipante}`,
+      text: message, // Versión texto plano (fallback)
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #297e93; border-bottom: 2px solid #297e93; padding-bottom: 10px;">
-            III CONGRESO DE TÉCNICOS EN LABORATORIO
-          </h2>
-          <h3 style="color: #333;">Nueva Inscripción</h3>
-          
-          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h4 style="color: #297e93; margin-top: 0;">Datos del Participante:</h4>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 5px 0; font-weight: bold;">Nombre y Apellido:</td><td style="padding: 5px 0;">${name}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Email:</td><td style="padding: 5px 0;">${email}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Fecha de Nacimiento:</td><td style="padding: 5px 0;">${formData.get("bornDate")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">D.N.I.:</td><td style="padding: 5px 0;">${formData.get("dni")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Domicilio:</td><td style="padding: 5px 0;">${formData.get("domicilio")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Teléfono:</td><td style="padding: 5px 0;">${formData.get("telefono")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Profesión:</td><td style="padding: 5px 0;">${formData.get("profesion")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Estudiante:</td><td style="padding: 5px 0;">${formData.get("estudiante")}</td></tr>
-              <tr><td style="padding: 5px 0; font-weight: bold;">Tipo de Asistente:</td><td style="padding: 5px 0;">${formData.get("tipoAsistente")}</td></tr>
-            </table>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+          <div style="background-color: #297e93; color: white; padding: 20px; text-align: center;">
+            <h1 style="margin: 0; font-size: 24px;">🔬 III CONGRESO DE TÉCNICOS EN LABORATORIO</h1>
           </div>
           
-          <p style="color: #666; font-size: 14px;">
-            Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
-          </p>
+          <div style="padding: 20px; background-color: #f8f9fa;">
+            <h2 style="color: #297e93; margin-top: 0;">📝 Nueva Inscripción Recibida</h2>
+            
+            <div style="background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+              <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                👤 Datos del Participante
+              </h3>
+              
+              <div style="display: grid; gap: 10px;">
+                <p style="margin: 8px 0;"><strong>Nombre Completo:</strong> ${nombreCompleto || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>📧 Email:</strong> ${emailParticipante || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>🆔 DNI:</strong> ${documentoIdentidad || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>🏠 Domicilio:</strong> ${domicilioCompleto || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>📞 Teléfono:</strong> ${numeroTelefono || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>💼 Profesión:</strong> ${profesionOcupacion || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>🎓 Es Estudiante:</strong> ${esEstudiante || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>👨‍⚕️ Tipo de Asistente:</strong> ${categoriaAsistente || 'No especificado'}</p>
+                <p style="margin: 8px 0;"><strong>🎂 Fecha de Nacimiento:</strong> ${fechaNacimiento || 'No especificado'}</p>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+              <p style="margin: 0; color: #0c5460; font-size: 14px;">
+                <strong>📅 Fecha de inscripción:</strong> ${new Date().toLocaleString("es-AR", {
+                  timeZone: "America/Argentina/Buenos_Aires",
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+          </div>
+          
+          <div style="background-color: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px;">
+            <p style="margin: 0;">Instituto San Cayetano - Salta, Argentina</p>
+            <p style="margin: 5px 0 0 0;">Este email fue generado automáticamente por el sistema de inscripciones</p>
+          </div>
         </div>
       `,
+      // Configuraciones adicionales para mejorar deliverability
+      priority: 'normal' as const,
+      headers: {
+        'X-Mailer': 'Nodemailer',
+        'X-Priority': '3',
+      },
     };
 
+    // Verificar conexión del transporter antes de enviar
+    try {
+      await transporter.verify();
+      console.log("✅ Conexión SMTP verificada correctamente");
+    } catch (verifyError) {
+      console.error("❌ Error al verificar conexión SMTP:", verifyError);
+      // Continuar con el envío de todas formas, algunos servidores no soportan verify()
+    }
+
     await transporter.sendMail(mailOptions);
+    console.log("✅ Email enviado exitosamente");
 
     return NextResponse.json(
-      { message: "Email sent successfully" },
+      { 
+        message: "Email enviado correctamente", 
+        success: true,
+        participante: {
+          nombre: nombreCompleto,
+          email: emailParticipante
+        }
+      },
       { status: 200, headers: corsHeaders }
     );
   } catch (error) {
-    console.error("Error sending email", error as Error);
+    console.error("Error sending email:", error);
     return NextResponse.json(
-      { message: "Email not sent", error: error },
+      {
+        message: "Error al enviar email",
+        error: error instanceof Error ? error.message : "Unknown error",
+        success: false,
+      },
       { status: 500, headers: corsHeaders }
     );
   }
 }
 
-// Manejar preflight OPTIONS request
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+    headers: corsHeaders,
   });
 }

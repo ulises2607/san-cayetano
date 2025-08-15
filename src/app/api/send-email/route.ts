@@ -1,27 +1,43 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-// Headers CORS configurados para el dominio del instituto
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://institutosancayetanosalta.com",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization",
-  "Access-Control-Allow-Credentials": "true",
-};
+// Headers CORS configurados para desarrollo y producción
+const allowedOrigins = [
+  "https://institutosancayetanosalta.com",
+  "http://127.0.0.1:5500", // Para desarrollo local
+  "http://localhost:5500",  // Para desarrollo local alternativo
+  "http://localhost:3000",  // Para desarrollo Next.js
+];
 
-export async function GET() {
+// Función para obtener headers CORS dinámicos
+function getCorsHeaders(origin?: string) {
+  const isAllowed = !origin || allowedOrigins.includes(origin) || origin.includes('localhost') || origin.includes('127.0.0.1');
+  
+  return {
+    "Access-Control-Allow-Origin": isAllowed ? (origin || "*") : "null",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization",
+    "Access-Control-Allow-Credentials": "false",
+  };
+}
+
+export async function GET(req: Request) {
+  const origin = req.headers.get('origin') || undefined;
   return NextResponse.json(
     { 
       message: "API de Inscripciones - III Congreso de Técnicos en Laboratorio",
       version: "1.0.0",
       status: "active"
     }, 
-    { headers: corsHeaders }
+    { headers: getCorsHeaders(origin) }
   );
 }
 
 export async function POST(req: Request) {
   try {
+    const origin = req.headers.get('origin') || undefined;
+    const corsHeaders = getCorsHeaders(origin);
+    
     const formData = await req.formData();
 
     // Extraer datos del formulario
@@ -179,6 +195,9 @@ Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
       { status: 200, headers: corsHeaders }
     );
   } catch (error) {
+    const origin = req.headers.get('origin') || undefined;
+    const corsHeaders = getCorsHeaders(origin);
+    
     console.error("Error sending email:", error);
     return NextResponse.json(
       {
@@ -191,9 +210,10 @@ Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
   }
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(req: Request) {
+  const origin = req.headers.get('origin') || undefined;
   return new NextResponse(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(origin),
   });
 }

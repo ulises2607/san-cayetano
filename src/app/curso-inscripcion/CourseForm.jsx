@@ -109,7 +109,7 @@ const CourseForm = () => {
               III CONGRESO DE TÉCNICOS EN LABORATORIO
             </h1>
             <p className="text-xl text-gray-600 italic">
-              "Detrás del diagnóstico, adelante en la ciencia"
+              &ldquo;Detrás del diagnóstico, adelante en la ciencia&rdquo;
             </p>
           </div>
 

@@ -7,7 +7,6 @@ const CourseForm = () => {
   const router = useRouter();
   const [dataForm, setDataForm] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,46 +15,26 @@ const CourseForm = () => {
     const data = Object.fromEntries(formData);
     setDataForm(data);
 
-    try {
-      // Crear un AbortController para timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 segundos timeout
+    // Redireccionar inmediatamente y enviar email en segundo plano
+    router.push("/curso-inscripcion/success");
 
-      const response = await fetch("/api/send-email", {
+    // Enviar email en segundo plano (fire and forget)
+    try {
+      fetch("/api/send-email", {
         method: "POST",
         body: formData,
-        signal: controller.signal,
+      }).then(response => {
+        if (response.ok) {
+          console.log("✅ Email enviado exitosamente en segundo plano");
+        } else {
+          console.error("❌ Error al enviar email en segundo plano");
+        }
+      }).catch(error => {
+        console.error("❌ Error en el envío del email:", error);
       });
-
-      clearTimeout(timeoutId); // Limpiar timeout si la respuesta llega a tiempo
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Email sent successfully", result);
-        setShowSuccess(true);
-        setIsLoading(false);
-        // Resetear el formulario
-        e.target.reset();
-      } else {
-        const error = await response.text(); // Cambiar a text() por si no es JSON válido
-        console.error("Error sending email", error);
-        setIsLoading(false);
-        alert("Error al enviar la inscripción. Por favor, inténtalo de nuevo.");
-      }
     } catch (error) {
-      console.error("Error sending email", error);
-      setIsLoading(false);
-      
-      if (error.name === 'AbortError') {
-        alert("La solicitud tardó demasiado. Por favor, inténtalo de nuevo.");
-      } else {
-        alert("Error al enviar la inscripción. Por favor, inténtalo de nuevo.");
-      }
+      console.error("❌ Error iniciando envío de email:", error);
     }
-  };
-
-  const closeSuccessMessage = () => {
-    setShowSuccess(false);
   };
 
   return (
@@ -365,46 +344,6 @@ const CourseForm = () => {
           </div>
         </div>
       </section>
-
-      {/* Mensaje de éxito */}
-      {showSuccess && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
-            <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">¡Inscripción Exitosa!</h3>
-              <p className="text-gray-600 mb-4">
-                Hemos recibido tu inscripción al III Congreso de Técnicos en Laboratorio.
-              </p>
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-yellow-700">
-                      <strong>¡IMPORTANTE!</strong> No olvides enviar el comprobante de pago por WhatsApp al <strong>+54 9 3874734054</strong> para confirmar tu inscripción.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-600 mb-6">Te contactaremos pronto con más detalles.</p>
-              <button
-                onClick={closeSuccessMessage}
-                className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white">

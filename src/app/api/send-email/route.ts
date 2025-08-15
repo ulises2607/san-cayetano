@@ -51,7 +51,8 @@ export async function POST(req: Request) {
     });
 
     // Configuración optimizada del transporter para Vercel
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
+      service: 'SMTP',
       host: process.env.EMAIL_HOST,
       port: 465,
       secure: true,
@@ -65,13 +66,13 @@ export async function POST(req: Request) {
       socketTimeout: 10000,     // 10 segundos
       tls: {
         rejectUnauthorized: false,
-        minVersion: "TLSv1.2",
+        minVersion: "TLSv1.2" as const,
       },
       // Configuraciones adicionales para mejor performance
       pool: false, // Desabilitar pool para funciones serverless
       maxConnections: 1,
       maxMessages: 1,
-    });
+    } as any);
 
     // Crear contenido del email de forma más eficiente
     const fechaInscripcion = new Date().toLocaleString("es-AR", {

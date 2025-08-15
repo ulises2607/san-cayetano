@@ -1,7 +1,8 @@
 {
   "functions": {
     "src/app/api/send-email/route.ts": {
-      "maxDuration": 30
+      "maxDuration": 25
     }
-  }
+  },
+  "regions": ["iad1"]
 }

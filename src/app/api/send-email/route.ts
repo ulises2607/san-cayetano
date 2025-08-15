@@ -8,7 +8,7 @@ export const maxDuration = 15; // 15 segundos máximo
 export async function GET() {
   return NextResponse.json({
     message: "API de Inscripciones - Congreso Lab",
-    status: "active"
+    status: "active",
   });
 }
 
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     const name = formData.get("fullname");
     const email = formData.get("Email");
-    
+
     // Mensaje simple como antes
     const message = `
 NUEVA INSCRIPCIÓN - III CONGRESO DE TÉCNICOS EN LABORATORIO
@@ -38,12 +38,17 @@ Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
 
     // Configuración simple como antes
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
+      host: process.env.EMAIL_HOST, // 'mail.institutosancayetanosalta.com'
       port: 465,
       secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        // ¡OJO! Esto desactiva la verificación de seguridad del certificado.
+        // Úsalo solo si la Solución 1 no es posible.
+        rejectUnauthorized: false,
       },
     });
 
@@ -55,20 +60,19 @@ Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
     };
 
     await transporter.sendMail(mailOptions);
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       message: "Email sent",
       success: true,
-      participante: { name, email }
+      participante: { name, email },
     });
-    
   } catch (error) {
     console.error("Error sending email", error);
     return NextResponse.json(
-      { 
-        message: "Email not sent", 
+      {
+        message: "Email not sent",
         error: error instanceof Error ? error.message : "Unknown error",
-        success: false
+        success: false,
       },
       { status: 500 }
     );

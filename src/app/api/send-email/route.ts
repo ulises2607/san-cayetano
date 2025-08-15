@@ -33,7 +33,7 @@ Profesión: ${formData.get("Profesion")}
 Estudiante: ${formData.get("Estudiante")}
 Tipo de Asistente: ${formData.get("Tipo de Asistente")}
 
-Fecha de inscripción: ${new Date().toLocaleString("es-AR")}
+Fecha de inscripción: ${new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })}
     `;
 
     // Configuración simple como antes

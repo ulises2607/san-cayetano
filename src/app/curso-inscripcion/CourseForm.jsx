@@ -17,10 +17,17 @@ const CourseForm = () => {
     setDataForm(data);
 
     try {
+      // Crear un AbortController para timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 segundos timeout
+
       const response = await fetch("/api/send-email", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId); // Limpiar timeout si la respuesta llega a tiempo
 
       if (response.ok) {
         const result = await response.json();
@@ -30,7 +37,7 @@ const CourseForm = () => {
         // Resetear el formulario
         e.target.reset();
       } else {
-        const error = await response.json();
+        const error = await response.text(); // Cambiar a text() por si no es JSON válido
         console.error("Error sending email", error);
         setIsLoading(false);
         alert("Error al enviar la inscripción. Por favor, inténtalo de nuevo.");
@@ -38,7 +45,12 @@ const CourseForm = () => {
     } catch (error) {
       console.error("Error sending email", error);
       setIsLoading(false);
-      alert("Error al enviar la inscripción. Por favor, inténtalo de nuevo.");
+      
+      if (error.name === 'AbortError') {
+        alert("La solicitud tardó demasiado. Por favor, inténtalo de nuevo.");
+      } else {
+        alert("Error al enviar la inscripción. Por favor, inténtalo de nuevo.");
+      }
     }
   };
 
